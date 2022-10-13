@@ -1,37 +1,140 @@
 
-
-
-<!-- Toolbar -->
-<div class="toolbar" role="banner">
-  <img
-    width="40"
-    alt="Angular Logo"
-    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg=="
-  />
-  <span>Welcome</span>
-    <div class="spacer"></div>
-</div>
+<div class="container" role="banner">
+  <div class="large-12 columns top-navigation">
+    <a href="#"><img alt="Propertyware" class="logo" src="../assets/logo.png"></a>
+  </div>
+  <div class="border-top my-3"></div>
 
 <div class="content" role="main">
-
-  <div class="card-container">
-    <div class="container">
-      <h1>Select Environment</h1>
-      <form [formGroup]="form">
-        <div class="form-group">
-          <select formControlName="website" class="form-control" (change)="changeWebsite($event)">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col"></div>
+      <div class="col"></div>
+      <div class="col">Select Environment</div>
+      <div class="col">
+        <form [formGroup]="form">
+          <select formControlName="website" (change)="changeEnv($event)">
             <option disabled>Select Environment</option>
-            <option>Choose Environment</option>
-            <option *ngFor="let web of websiteList">{{web}}</option>
+            <option value ="">Choose Environment</option>
+            <option value = "{{env.id}}" *ngFor="let env of envData">{{env.name}}</option>
           </select>
+        </form>
+      </div>
+      <div class="col"></div>
+      <div class="col"></div>
+    </div>
+    <div class="row">
+      <div class="col"></div>
+      <div class="col"></div>
+      <div class="col">Select Organization</div>
+      <div class="col">
+        <form [formGroup]="form">
+          <select formControlName="website" (change)="changeOrg($event)">
+            <option disabled>Select Organization</option>
+            <option value="">Choose Environment</option>
+            <option value = "{{org.id}}" *ngFor="let org of orgList">{{org.name}}</option>
+          </select>
+        </form>
+      </div>
+      <div class="col"></div>
+      <div class="col"></div>
+    </div>
+    <br>
+  </div>
+
+  <div class="m-3" *ngIf="selectedOrg!= 0 ">
+    <h5>Propertyware Rest API Test Report::</h5> Selected Env <strong>{{envName}} </strong> and Selected Org:
+      <strong>{{orgName}} </strong>
+    <form (ngSubmit)="reTestRestApi()">
+      <div class="form-group form-inline">
+        Search by EndPoint:
+        <input type="text"
+          name="searchTerm"
+          [(ngModel)]="searchTerm"
+          (input)="search($event)" />
+        &nbsp;&nbsp;
+        <span *ngIf="loader">
+          <button class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span class="sr-only">Loading...</span>
+          </button>
+        </span>
+      </div>
+        <div class="alert alert-success" *ngIf="errorMessage=='success'">
+          <span class="large-fontsize">Retest completed successfully</span>
         </div>
-        Selected environment: {{selectedEnv}}
-      </form>
+
+        <div class="alert alert-danger" role="alert" *ngIf="errorMessage!='success' && errorMessage != ''">
+          <p class="alert-danger">Error in retest</p>
+        </div>
+
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+          <th scope="col">
+            <input type="checkbox" [(ngModel)]="masterSelected" name="list_name" value="m1"
+                   (change)="checkUncheckAll()"/> &nbsp;<strong>Select All</strong>
+          </th>
+          <th scope="col" sortable="endpoint">EndPoint</th>
+          <th scope="col" sortable="action">Action</th>
+          <th scope="col" sortable="group">Group</th>
+          <th scope="col" sortable="input">Input</th>
+          <th scope="col" sortable="output">Output</th>
+          <th scope="col" sortable="executionTime">ExecutionTime</th>
+          <th scope="col" sortable="lastTested">Last Tested</th>
+          <th scope="col" sortable="result">Result</th>
+        </tr>
+        </thead>
+        <tbody *ngIf="reportData.length != 0">
+        <tr *ngFor="let report of reportData; let i=index">
+          <td><input type="checkbox" [(ngModel)]="report.isSelected" name="list_name" value="{{report.id}}"
+                     (change)="isAllSelected()"/>
+            &nbsp; {{report.id}}
+          </td>
+          <td>
+            {{ report.endpoint }}
+          </td>
+          <td>{{ report.action}}</td>
+          <td>{{ report.group }}</td>
+          <td> <a href="#" (click)="openInputPopup(report)">View </a></td>
+          <td> <a href="#" (click)="openPopup(report)">View </a></td>
+          <td> {{report.executionTime}}</td>
+          <td>{{ report.lastTested }}</td>
+          <td>
+            <strong *ngIf="report.result == 'FAIL'" class="text-danger">{{ report.result }}</strong>
+            <div *ngIf="report.executionTime > 2000">
+              <strong *ngIf="report.result != 'FAIL'" class="text-warning">{{ report.result }}</strong>
+            </div>
+            <div *ngIf="report.executionTime <= 2000">
+              <strong *ngIf="report.result != 'FAIL'" class="text-success">{{ report.result }}</strong>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <input type="submit" value="Retest" class="btn btn-success" [disabled]="!isValid"/> &nbsp;&nbsp;
+      <input type="button" value="Cancel" (click)="resetFormData()" class="btn btn-success"/>
+    </form>
+  </div>
+  <br/>
+  <br/>
+  <div class="modal"
+    tabindex="-1"
+    role="dialog"
+    [ngStyle]="{'display':displayStyle}">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Selected JSON data</h4>
+          <button type="button" class="btn btn-danger" (click)="closePopup()">
+            Close
+          </button>
+        </div>
+        <div class="modal-body">
+          <ngx-json-viewer [json]=selectedData></ngx-json-viewer>
+        </div>
+      </div>
     </div>
   </div>
-  <!-- Footer -->
-  <footer>
-
-  </footer>
-
+</div>
 </div>

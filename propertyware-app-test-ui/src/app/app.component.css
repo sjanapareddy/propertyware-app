@@ -1,0 +1,75 @@
+.form-control {
+  width:auto;
+}
+
+a{
+  text-decoration: none;
+  cursor: pointer
+}
+
+.large-fontsize{
+  font-size: 13px !important;
+}
+
+.row {
+  max-width: 1024px !important;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.container {width: 1024px; margin: 0 auto; box-shadow: 10px 10px 25px #000000;min-height: 400px}
+
+
+
+form select {font-size: 12px; font-family: Arial, sans-serif; margin-bottom: 10px;}
+form div table{font-size: 10px; font-family: Arial, sans-serif; margin-bottom: 10px;}
+div {font-size: 12px; font-family: Arial, sans-serif; margin-bottom: 10px;}
+
+
+
+input.text, select, textarea {
+  -moz-appearance: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background: none repeat scroll 0 0 rgb(255, 255, 255);
+  border-color: #e1e1e1 #e1e1e1 #e1e1e1 #52a7f7;
+  border-image: none;
+  border-style: solid;
+  border-width: 1px 1px 1px 3px;
+  box-shadow: none;
+  display: block;
+  font-family: 'Arial, sans-serif';
+  font-size: 12px;
+  height: 25px;
+  color: #464646;
+  margin-bottom: 0px !important;
+  padding: 0px;
+  transition: all 0.25s ease-in-out 0s;
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  -moz-appearance: none;
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  background: none repeat scroll 0 0 rgb(255, 255, 255);
+  border-color: #52a7f7 #52a7f7 #52a7f7 #52a7f7;
+  border-image: none;
+  border-style: solid;
+  border-width: 1px 1px 1px 3px;
+  box-shadow: 0 0 3px #CCC;
+}
+
+option[disabled] {
+  color: #d7d7d7;
+  display: none;
+}
+
+option {
+  color: black;
+}
