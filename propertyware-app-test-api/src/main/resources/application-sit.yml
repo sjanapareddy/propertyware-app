@@ -1,0 +1,14 @@
+#spring.h2.console.enabled=true
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  datasource:
+    url: jdbc:mysql://dev102dbmys.ppw.realpage.com:3306/pw_rest_test_tool?sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false&serverTimezone=America/Chicago
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: pwdev
+    password: pwdev
+  hibernate:
+    ddl: true
+  #h2:
+  #console:
+  #enabled: true
