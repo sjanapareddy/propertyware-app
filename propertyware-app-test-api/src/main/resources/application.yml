@@ -1,6 +1,7 @@
 server:
   servlet:
-    contextPath: /pw
+    contextPath: /
+  port: 8082
 
 spring:
   application:
@@ -12,3 +13,4 @@ spring:
       enabled: true
   profiles:
     active: sit
+
