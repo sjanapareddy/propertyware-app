@@ -85,6 +85,7 @@ public class APIService {
                     if (Objects.nonNull(e.getEndTime()) && Objects.nonNull(e.getStartTime()))
                         pojo.setExecutionTime(e.getEndTime().getTime() - e.getStartTime().getTime());
                     pojo.setResult(e.getResult());
+                    pojo.setUrl(ep.get().getEndpointUrl());
                     return pojo;
                 }).collect(Collectors.toList());
     }

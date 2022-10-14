@@ -28,4 +28,5 @@ public class ExecutionSummaryPojo {
     private Long executionTime;
     private Timestamp lastTested;
     private String result;
+    private String url;
 }
