@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
-import {environment} from "../environments/environment";
 interface Report {
   id: number;
   endpoint: string;
@@ -12,8 +11,10 @@ interface Report {
   executionTime: number;
   lastTested: number;
   result: string;
+  url: string;
   isSelected:boolean;
 }
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -99,28 +100,34 @@ export class AppComponent {
   envData:any  = [];
 
   getEnvironments(): void {
+    this.loader = true;
     this.http
-      .get(environment.environments)
+      .get("./pw/api/environments")
       .subscribe((data: any) => {
         this.envData = data;
+        this.loader = false;
       });
   }
 
   getOrgsList(id: number): void {
+    this.loader = true;
      this.http
-      .get("http://10.13.97.85:8080/pw/api/environments/"+id+"/organizations")
+      .get("./pw/api/environments/"+id+"/organizations")
       .subscribe((data: any) => {
         this.orgList = data;
+        this.loader = false;
       });
   }
 
   getAPITestData(envId:number, orgId:number): void {
+    this.loader = true;
     this.http
-      .get<Report[]>("http://10.13.97.85:8080/pw/api/environments/"+envId+"/organizations/"+orgId+"/executions")
+      .get<Report[]>("./pw/api/environments/"+envId+"/organizations/"+orgId+"/executions")
       .subscribe((data: Report[]) => {
         debugger
         this.reportData = data;
         this.allCountries = this.reportData;
+        this.loader = false;
       });
   }
 
@@ -181,7 +188,7 @@ export class AppComponent {
       this.list_of_objects.push(list.id);
     }
 
-    let url = "http://10.13.97.85:8080/pw/api/environments/"+this.selectedEnv+"/organizations/"+this.selectedOrg+"/executions";
+    let url = "./pw/api/environments/"+this.selectedEnv+"/organizations/"+this.selectedOrg+"/executions";
     this.http.put<any>(url, this.list_of_objects)
       .subscribe({
         next: data => {

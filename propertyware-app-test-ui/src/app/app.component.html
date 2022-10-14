@@ -1,7 +1,7 @@
 
 <div class="container" role="banner">
   <div class="large-12 columns top-navigation">
-    <a href="#"><img alt="Propertyware" class="logo" src="../assets/logo.png"></a>
+    <a href="#"><img alt="Propertyware" class="logo" src="../assets/Combined Logos.png"></a>
   </div>
   <div class="border-top my-3"></div>
 
@@ -42,23 +42,23 @@
     <br>
   </div>
 
+  <span *ngIf="loader">
+      <button class="btn btn-primary" type="button" disabled>
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span class="sr-only">Loading...</span>
+      </button>
+    </span>
   <div class="m-3" *ngIf="selectedOrg!= 0 ">
-    <h5>Propertyware Rest API Test Report::</h5> Selected Env <strong>{{envName}} </strong> and Selected Org:
+    <h5>Propertyware Rest API Test Report: </h5> Selected Env <strong>{{envName}} </strong> and Selected Org:
       <strong>{{orgName}} </strong>
     <form (ngSubmit)="reTestRestApi()">
       <div class="form-group form-inline">
-        Search by EndPoint:
+        Search by End Point:
         <input type="text"
           name="searchTerm"
           [(ngModel)]="searchTerm"
-          (input)="search($event)" />
-        &nbsp;&nbsp;
-        <span *ngIf="loader">
-          <button class="btn btn-primary" type="button" disabled>
-            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-            <span class="sr-only">Loading...</span>
-          </button>
-        </span>
+          (input)="search($event)" />       &nbsp;&nbsp;
+
       </div>
         <div class="alert alert-success" *ngIf="errorMessage=='success'">
           <span class="large-fontsize">Retest completed successfully</span>
@@ -75,12 +75,12 @@
             <input type="checkbox" [(ngModel)]="masterSelected" name="list_name" value="m1"
                    (change)="checkUncheckAll()"/> &nbsp;<strong>Select All</strong>
           </th>
-          <th scope="col" sortable="endpoint">EndPoint</th>
+          <th scope="col" sortable="endpoint">End Point</th>
           <th scope="col" sortable="action">Action</th>
           <th scope="col" sortable="group">Group</th>
           <th scope="col" sortable="input">Input</th>
           <th scope="col" sortable="output">Output</th>
-          <th scope="col" sortable="executionTime">ExecutionTime</th>
+          <th scope="col" sortable="executionTime">Execution Time</th>
           <th scope="col" sortable="lastTested">Last Tested</th>
           <th scope="col" sortable="result">Result</th>
         </tr>
@@ -91,7 +91,7 @@
                      (change)="isAllSelected()"/>
             &nbsp; {{report.id}}
           </td>
-          <td>
+          <td title="{{ report.url }}">
             {{ report.endpoint }}
           </td>
           <td>{{ report.action}}</td>

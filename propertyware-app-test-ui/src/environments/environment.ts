@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  environments: 'http://10.13.97.85:8080/pw/api/environments',
-  organizations: 'http://10.13.97.85:8080/pw/api/environments'
+  environments: 'http://localhost:8080/pw/api/environments',
+  organizations: 'http://localhost:8080/pw/api/environments'
 };
 
 /*
