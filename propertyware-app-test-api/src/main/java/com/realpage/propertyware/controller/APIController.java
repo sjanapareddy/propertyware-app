@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api")
+@RequestMapping("/pw/api")
 public class APIController {
 
     @Autowired
@@ -22,6 +22,7 @@ public class APIController {
 
         return ResponseEntity.ok(apiService.getEnvironmentDetails());
     }
+
 
     @GetMapping("/environments/{id}/organizations")
     public ResponseEntity<Object> getOrganizationsForEnvironment(@PathVariable Integer id) {

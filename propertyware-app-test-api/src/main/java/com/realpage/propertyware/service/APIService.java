@@ -85,7 +85,6 @@ public class APIService {
                     if (Objects.nonNull(e.getEndTime()) && Objects.nonNull(e.getStartTime()))
                         pojo.setExecutionTime(e.getEndTime().getTime() - e.getStartTime().getTime());
                     pojo.setResult(e.getResult());
-                    pojo.setUrl(ep.get().getEndpointUrl());
                     return pojo;
                 }).collect(Collectors.toList());
     }
@@ -114,13 +113,13 @@ public class APIService {
         HttpEntity<String> req = null;
         HttpMethod method = null;
 
-        if ("GET".equals(ep.get().getEndPoint())) {
+        if ("GET".equals(ep.get().getAction())) {
             method = HttpMethod.GET;
             req = new HttpEntity<>(headers);
-        } else if ("POST".equals(ep.get().getEndPoint())) {
+        } else if ("POST".equals(ep.get().getAction())) {
             method = HttpMethod.POST;
             req = new HttpEntity<>(es.get().getInput(), headers);
-        } else if ("PUT".equals(ep.get().getEndPoint())) {
+        } else if ("PUT".equals(ep.get().getAction())) {
             method = HttpMethod.PUT;
             req = new HttpEntity<>(es.get().getInput(), headers);
         }
