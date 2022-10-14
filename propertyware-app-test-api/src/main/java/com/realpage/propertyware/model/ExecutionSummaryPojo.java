@@ -10,7 +10,7 @@ import lombok.Setter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @Setter
 @Getter
@@ -26,6 +26,6 @@ public class ExecutionSummaryPojo {
     @JsonSerialize(using = JsonArraySerializer.class)
     private JSONArray output;
     private Long executionTime;
-    private Date lastTested;
+    private Timestamp lastTested;
     private String result;
 }

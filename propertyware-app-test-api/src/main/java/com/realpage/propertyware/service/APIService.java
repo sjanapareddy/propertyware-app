@@ -101,9 +101,14 @@ public class APIService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        headers.set("x-propertyware-system-id", String.valueOf(org.get().getSystemId()));
-        headers.set("x-propertyware-client-id", org.get().getClientId());
-        headers.set("x-propertyware-client-secret", org.get().getClientSecret());
+        if(org.get().getEnvironmentId()==3) {
+            headers.set("x-buildium-client-id", org.get().getClientId());
+            headers.set("x-buildium-client-secret", org.get().getClientSecret());
+        } else {
+            headers.set("x-propertyware-system-id", String.valueOf(org.get().getSystemId()));
+            headers.set("x-propertyware-client-id", org.get().getClientId());
+            headers.set("x-propertyware-client-secret", org.get().getClientSecret());
+        }
 
         HttpEntity<String> req = null;
         HttpMethod method = null;
@@ -124,14 +129,14 @@ public class APIService {
         try {
             response = restTemplate.exchange(url, method, req, byte[].class);
             es.get().setEndTime(new Timestamp(System.currentTimeMillis()));
-            es.get().setLastTested(new Date(System.currentTimeMillis()));
+            es.get().setLastTested(new Timestamp(System.currentTimeMillis()));
             es.get().setOutput(response.getBody());
             es.get().setStatusCode(response.getStatusCodeValue());
             es.get().setResult("PASS");
         } catch (HttpClientErrorException e) {
 
             es.get().setEndTime(new Timestamp(System.currentTimeMillis()));
-            es.get().setLastTested(new Date(System.currentTimeMillis()));
+            es.get().setLastTested(new Timestamp(System.currentTimeMillis()));
             es.get().setOutput(e.getResponseBodyAsByteArray());
             es.get().setStatusCode(e.getRawStatusCode());
             es.get().setResult("FAIL");

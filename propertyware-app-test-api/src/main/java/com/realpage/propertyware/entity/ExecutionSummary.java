@@ -34,7 +34,7 @@ public class ExecutionSummary {
     @Column(name = "environment_Id")
     private Integer environmentId;
     @Column(name = "last_tested")
-    private Date lastTested;
+    private Timestamp lastTested;
     @Column(name = "status_code")
     private Integer statusCode;
     @Column(name = "org_id")
