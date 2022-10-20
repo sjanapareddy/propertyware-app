@@ -60,7 +60,7 @@ public class APIService {
     public List<ExecutionSummaryPojo> getExecutionSummaryForEnvAndOrg(Integer envId, Integer orgId) {
 
         List<ExecutionSummary> executionSummaries = summaryRepository.findAllByEnvironmentIdAndOrgId(envId, orgId);
-
+//        Optional<EndPoints> ep = endPointsRepository.findById(es.get().getEndpointId());
         return executionSummaries.stream()
                 .map(e -> {
                     ExecutionSummaryPojo pojo = new ExecutionSummaryPojo();
@@ -85,64 +85,69 @@ public class APIService {
                     if (Objects.nonNull(e.getEndTime()) && Objects.nonNull(e.getStartTime()))
                         pojo.setExecutionTime(e.getEndTime().getTime() - e.getStartTime().getTime());
                     pojo.setResult(e.getResult());
+                    pojo.setUrl(ep.get().getEndpointUrl());
                     return pojo;
                 }).collect(Collectors.toList());
     }
 
     public ExecuteAgainResponse executeAPIAgain(List<Integer> ids) {
 
-        Integer id = ids.get(0);
-        Optional<ExecutionSummary> es = summaryRepository.findById(id);
-        Optional<EndPoints> ep = endPointsRepository.findById(es.get().getEndpointId());
-        Optional<Organization> org = organizationRepository.findById(es.get().getOrgId());
-        String url = Objects.isNull(ep.get().getUrlParameters())
-                ? (ep.get().getEndpointUrl()) : (ep.get().getEndpointUrl() + "?" + ep.get().getUrlParameters());
+        for (Integer id: ids) {
+            Optional<ExecutionSummary> es = summaryRepository.findById(id);
+            Optional<EndPoints> ep = endPointsRepository.findById(es.get().getEndpointId());
+            Optional<Organization> org = organizationRepository.findById(es.get().getOrgId());
+            String url = Objects.isNull(ep.get().getUrlParameters())
+                    ? (ep.get().getEndpointUrl()) : (ep.get().getEndpointUrl() + "?" + ep.get().getUrlParameters());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        if(org.get().getEnvironmentId()==3) {
-            headers.set("x-buildium-client-id", org.get().getClientId());
-            headers.set("x-buildium-client-secret", org.get().getClientSecret());
-        } else {
-            headers.set("x-propertyware-system-id", String.valueOf(org.get().getSystemId()));
-            headers.set("x-propertyware-client-id", org.get().getClientId());
-            headers.set("x-propertyware-client-secret", org.get().getClientSecret());
+            if(org.get().getEnvironmentId()==3) {
+                headers.set("x-buildium-client-id", org.get().getClientId());
+                headers.set("x-buildium-client-secret", org.get().getClientSecret());
+            } else {
+                headers.set("x-propertyware-system-id", String.valueOf(org.get().getSystemId()));
+                headers.set("x-propertyware-client-id", org.get().getClientId());
+                headers.set("x-propertyware-client-secret", org.get().getClientSecret());
+            }
+
+            HttpEntity<String> req = null;
+            HttpMethod method = null;
+
+            if ("GET".equals(ep.get().getAction())) {
+                method = HttpMethod.GET;
+                req = new HttpEntity<>(headers);
+            } else if ("POST".equals(ep.get().getAction())) {
+                method = HttpMethod.POST;
+                req = new HttpEntity<>(es.get().getInput(), headers);
+            } else if ("PUT".equals(ep.get().getAction())) {
+                method = HttpMethod.PUT;
+                req = new HttpEntity<>(es.get().getInput(), headers);
+            }
+
+            es.get().setStartTime(new Timestamp(System.currentTimeMillis()));
+            ResponseEntity<byte[]> response = null;
+            try {
+                response = restTemplate.exchange(url, method, req, byte[].class);
+                es.get().setEndTime(new Timestamp(System.currentTimeMillis()));
+                es.get().setLastTested(new Timestamp(System.currentTimeMillis()));
+                es.get().setOutput(response.getBody());
+                es.get().setStatusCode(response.getStatusCodeValue());
+                es.get().setResult("PASS");
+            } catch (HttpClientErrorException e) {
+
+                es.get().setEndTime(new Timestamp(System.currentTimeMillis()));
+                es.get().setLastTested(new Timestamp(System.currentTimeMillis()));
+                es.get().setOutput(e.getResponseBodyAsByteArray());
+                es.get().setStatusCode(e.getRawStatusCode());
+                es.get().setResult("FAIL");
+            }
+
+            summaryRepository.save(es.get());
         }
 
-        HttpEntity<String> req = null;
-        HttpMethod method = null;
 
-        if ("GET".equals(ep.get().getAction())) {
-            method = HttpMethod.GET;
-            req = new HttpEntity<>(headers);
-        } else if ("POST".equals(ep.get().getAction())) {
-            method = HttpMethod.POST;
-            req = new HttpEntity<>(es.get().getInput(), headers);
-        } else if ("PUT".equals(ep.get().getAction())) {
-            method = HttpMethod.PUT;
-            req = new HttpEntity<>(es.get().getInput(), headers);
-        }
 
-        es.get().setStartTime(new Timestamp(System.currentTimeMillis()));
-        ResponseEntity<byte[]> response = null;
-        try {
-            response = restTemplate.exchange(url, method, req, byte[].class);
-            es.get().setEndTime(new Timestamp(System.currentTimeMillis()));
-            es.get().setLastTested(new Timestamp(System.currentTimeMillis()));
-            es.get().setOutput(response.getBody());
-            es.get().setStatusCode(response.getStatusCodeValue());
-            es.get().setResult("PASS");
-        } catch (HttpClientErrorException e) {
-
-            es.get().setEndTime(new Timestamp(System.currentTimeMillis()));
-            es.get().setLastTested(new Timestamp(System.currentTimeMillis()));
-            es.get().setOutput(e.getResponseBodyAsByteArray());
-            es.get().setStatusCode(e.getRawStatusCode());
-            es.get().setResult("FAIL");
-        }
-
-        summaryRepository.save(es.get());
 
         return new ExecuteAgainResponse("success");
     }

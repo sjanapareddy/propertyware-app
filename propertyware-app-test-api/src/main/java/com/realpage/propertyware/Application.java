@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableJpaRepositories(basePackages = "com.realpage.propertyware.repository")
 public class Application {
 
+
     @Bean
     public RestTemplate getRestTemplate() {
 
